@@ -8,6 +8,18 @@ export const TIER_STYLES: Record<string, { color: string; borderColor: string; b
   Legend: { color: "#fff", borderColor: "rgba(245,197,66,.55)", background: "linear-gradient(90deg, rgba(245,197,66,.35), rgba(255,123,123,.35), rgba(192,139,255,.35))" },
 };
 
+/**
+ * Warna VIP: emas dengan gradient yang bergerak (lihat keyframes
+ * `vip-gold-shift` di globals.css). `animation` sengaja mengembalikan nama
+ * keyframe agar bisa dipasang lewat class, bukan inline style.
+ */
+export const VIP_GOLD = {
+  color: "#f5c542",
+  borderColor: "rgba(245,197,66,.55)",
+  background: "linear-gradient(100deg, #8a6314 0%, #f5c542 18%, #fff4c9 32%, #f5c542 46%, #a8791c 64%, #f5c542 82%, #fff4c9 100%)",
+  backgroundSize: "260% 100%",
+} as const;
+
 export function tierStyle(title: string) {
   return TIER_STYLES[title] ?? { color: "#a4b0a7", borderColor: "rgba(164,176,167,.3)", background: "rgba(164,176,167,.08)" };
 }

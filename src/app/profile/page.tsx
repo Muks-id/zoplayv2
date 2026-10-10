@@ -13,7 +13,7 @@ import {
   Settings,
 } from "lucide-react";
 import { SiteNavigation } from "@/components/site-navigation";
-import { tierStyle } from "@/lib/tier-style";
+import { tierStyle, VIP_GOLD } from "@/lib/tier-style";
 import { isRecord } from "@/lib/utils";
 import { AVATAR_OPTIONS, svgToDataUri } from "@/lib/avatars";
 
@@ -62,7 +62,15 @@ export default function ProfilePage() {
 
   const username = user?.username || user?.fullName || user?.primaryEmailAddress?.emailAddress || profile?.username || "Player";
   const initials = username.slice(0, 2).toUpperCase();
-  const title = profile?.tier.title ?? "Rookie";
+
+  // Admin selalu tampil dengan tier tertinggi (Legend), apa pun XP-nya.
+  const isAdmin = user?.publicMetadata?.role === "admin";
+  const title = isAdmin ? "Legend" : (profile?.tier.title ?? "Rookie");
+  const style = tierStyle(title);
+  // Legend punya background gradient multi-warna; VIP memakai emas bergeser.
+  const badgeStyle = isAdmin
+    ? { color: style.color, borderColor: style.borderColor, backgroundImage: style.background }
+    : { color: style.color, borderColor: style.borderColor, background: style.background };
 
   return (
     <main className="profile-page">
@@ -87,9 +95,9 @@ export default function ProfilePage() {
             <div className="profile-identity">
               <div className="profile-name-row">
                 <h1>{username}</h1>
-                <span className="tier-badge" style={tierStyle(title)}>{title}</span>
+                <span className="tier-badge" style={badgeStyle}>{title}</span>
               </div>
-              <p className="profile-tier" style={tierStyle(title)}><Crown size={13} /> {title}{vip?.isVip && <span className="profile-vip-tag">VIP</span>}</p>
+              <p className="profile-tier" style={badgeStyle}><Crown size={13} /> {title}{vip?.isVip && <span className="profile-vip-tag vip-gold" style={VIP_GOLD}>VIP</span>}</p>
               <div className="profile-xp">
                 <div className="profile-xp-head">
                   <span>{profile?.xp ?? 0} XP</span>
