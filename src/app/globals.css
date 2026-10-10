@@ -784,7 +784,13 @@ button { color: inherit; }
 .presence-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--z-green); box-shadow: 0 0 8px rgba(155, 225, 93, .8); }
 
 /* ---------- Halaman Profil ---------- */
-.profile-container { width: min(760px, calc(100% - 30px)); margin: 18px auto 40px; }
+.profile-container { width: min(760px, calc(100% - 30px)); margin: 18px auto 40px; padding-bottom: 0; }
+/* Di mobile ada bilah navigasi bawah fixed (tinggi 59px + 12px jarak), jadi
+   konten profil diberi ruang ekstra supaya tombol Logout tidak tertutup.
+   Breakpoint 700px mengikuti aturan .mobile-bottom-bar. */
+@media (max-width: 700px) {
+  .profile-container { margin-bottom: 0; padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
+}
 .profile-hero { position: relative; border: 1px solid rgba(219, 239, 224, .12); border-radius: 12px; background-size: cover; background-position: center 30%; overflow: hidden; }
 .profile-hero::before { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(5, 10, 8, .25), rgba(5, 10, 8, .92) 82%); }
 .profile-hero-shade { display: none; }
