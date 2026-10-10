@@ -9,6 +9,14 @@ function toSafeRedirect(value: string | null) {
   return value && value.startsWith("/") && !value.startsWith("//") ? value : "/";
 }
 
+function GoogleIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path fill="#EA4335" d="M12 10.2v3.9h5.5c-.24 1.4-1.7 4.1-5.5 4.1-3.3 0-6-2.7-6-6.1s2.7-6.1 6-6.1c1.9 0 3.2.8 3.9 1.5l2.7-2.6C16.9 3.2 14.7 2.2 12 2.2 6.8 2.2 2.7 6.3 2.7 11.5S6.8 20.8 12 20.8c5.7 0 9.5-4 9.5-9.7 0-.65-.07-1.14-.16-1.63H12z" />
+    </svg>
+  );
+}
+
 export default function SignInForm() {
   const { isLoaded, signIn, setActive } = useSignIn();
   const router = useRouter();
@@ -27,6 +35,22 @@ export default function SignInForm() {
     }
     return fallback;
   };
+
+  async function handleGoogle() {
+    if (!isLoaded) return;
+    setError(null);
+    setBusy(true);
+    try {
+      await signIn.authenticateWithRedirect({
+        strategy: "oauth_google",
+        redirectUrl: `${window.location.origin}/sign-in`,
+        redirectUrlComplete: `${window.location.origin}/profile`,
+      });
+    } catch (err) {
+      setError(clerkMessage(err, "Gagal masuk dengan Google. Coba lagi."));
+      setBusy(false);
+    }
+  }
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -53,6 +77,13 @@ export default function SignInForm() {
       <span className="section-label">MASUK</span>
       <h1>Selamat datang kembali</h1>
       <p>Masuk dengan email atau username dan password Anda.</p>
+      <div className="auth-oauth">
+        <button type="button" className="oauth-button" onClick={handleGoogle} disabled={busy}>
+          <GoogleIcon />
+          <span>Masuk dengan Google</span>
+        </button>
+      </div>
+      <div className="auth-divider"><span>atau</span></div>
       <form onSubmit={handleSubmit} className="auth-form">
         <label className="auth-field">
           <span>Email atau username</span>
@@ -64,6 +95,9 @@ export default function SignInForm() {
         </label>
         {error && <p className="auth-error" role="alert">{error}</p>}
         <button type="submit" className="primary-button" disabled={busy}>{busy ? "Memproses..." : "Masuk"}</button>
+        <p className="auth-switch">
+          <Link href="/forgot-password">Lupa sandi?</Link>
+        </p>
         <p className="auth-switch">Belum punya akun? <Link href={`/sign-up?redirect_url=${encodeURIComponent(target)}`}>Daftar</Link></p>
       </form>
     </div>
