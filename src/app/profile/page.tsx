@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { SiteNavigation } from "@/components/site-navigation";
 import { tierStyle } from "@/lib/tier-style";
+import { VipBadge } from "@/components/vip-badge";
 import { isRecord } from "@/lib/utils";
 import { AVATAR_OPTIONS, svgToDataUri } from "@/lib/avatars";
 
@@ -97,7 +98,11 @@ export default function ProfilePage() {
                 <h1>{username}</h1>
                 <span className="tier-badge" style={badgeStyle}>{title}</span>
               </div>
-              <p className="profile-tier" style={badgeStyle}><Crown size={13} /> {title}{vip?.isVip && <span className="profile-vip-tag vip-gold"><Crown size={10} strokeWidth={2.5} /> VIP</span>}</p>
+              <div className="chat-badges profile-badges">
+                {isAdmin && <span className="admin-badge">Admin</span>}
+                <span className="tier-badge" style={badgeStyle}>{title}</span>
+                {vip?.isVip && <VipBadge />}
+              </div>
               <div className="profile-xp">
                 <div className="profile-xp-head">
                   <span>{profile?.xp ?? 0} XP</span>
