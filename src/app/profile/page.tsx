@@ -96,7 +96,6 @@ export default function ProfilePage() {
             <div className="profile-identity">
               <div className="profile-name-row">
                 <h1>{username}</h1>
-                <span className="tier-badge" style={badgeStyle}>{title}</span>
               </div>
               <div className="chat-badges profile-badges">
                 {isAdmin && <span className="admin-badge">Admin</span>}
