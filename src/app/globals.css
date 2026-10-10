@@ -527,7 +527,9 @@ button { color: inherit; }
   .catalog-toolbar { align-items: flex-start; flex-direction: column; gap: 12px; margin-top: 22px; }
   .category-scroll { width: calc(100% + 19px); margin-right: -19px; padding-right: 19px; }
   .category-chip { padding: 7px 10px; font-size: 10px; }
-  .catalog-tabs { align-self: flex-end; }
+  /* Tab tetap full-width di mobile; sebelumnya `flex-end` membuatnya
+   menyempit mengikuti isi. */
+.catalog-tabs { align-self: stretch; }
   .game-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px 10px; padding-top: 16px; }
   .game-card { padding: 4px 4px 7px; border-radius: 5px; background: linear-gradient(145deg, rgba(221, 255, 233, .085), rgba(255, 255, 255, .025)); backdrop-filter: blur(12px); }
   .game-art { aspect-ratio: 1.2 / 1; border-radius: 3px; }
