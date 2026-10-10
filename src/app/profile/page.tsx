@@ -11,6 +11,7 @@ import {
   Download,
   LogOut,
   Settings,
+  Sparkles,
 } from "lucide-react";
 import { SiteNavigation } from "@/components/site-navigation";
 import { tierStyle } from "@/lib/tier-style";
@@ -29,6 +30,22 @@ type ProfileData = {
 type VipData = { isVip: boolean; expiresAt: string | null; daysLeft: number };
 
 const banner = "/profile-banner.gif";
+
+/**
+ * Tabel tier harus sinkron dengan TIERS di src/lib/server/profiles.ts.
+ * Nilai XP di sini juga dipakai untuk menghitung jumlah download minimum.
+ */
+const XP_PER_DOWNLOAD = 25;
+const TIER_ROWS: { title: string; xp: number; downloads: number }[] = (
+  [
+    { title: "Rookie", xp: 0 },
+    { title: "Gamer", xp: 150 },
+    { title: "Pro Player", xp: 400 },
+    { title: "Veteran", xp: 900 },
+    { title: "Elite", xp: 1800 },
+    { title: "Legend", xp: 3500 },
+  ] as { title: string; xp: number }[]
+).map((row) => ({ ...row, downloads: Math.ceil(row.xp / XP_PER_DOWNLOAD) }));
 
 export default function ProfilePage() {
   const { user, isLoaded } = useUser();
@@ -73,6 +90,12 @@ export default function ProfilePage() {
     ? { color: style.color, borderColor: style.borderColor, backgroundImage: style.background }
     : { color: style.color, borderColor: style.borderColor, background: style.background };
 
+  // Admin selalu di Legend, jadi XP dan bar progresnya ikut menyesuaikan
+  // supaya tidak menampilkan "25 XP menuju Legend" yang membingungkan.
+  const LEGEND_XP = 3500;
+  const displayXp = isAdmin ? LEGEND_XP : (profile?.xp ?? 0);
+  const progress = isAdmin ? 100 : (profile?.tier.progress ?? 0);
+
   return (
     <main className="profile-page">
       <SiteNavigation currentPage="profile" />
@@ -104,15 +127,17 @@ export default function ProfilePage() {
               </div>
               <div className="profile-xp">
                 <div className="profile-xp-head">
-                  <span>{profile?.xp ?? 0} XP</span>
+                  <span>{displayXp} XP</span>
                   <span>
-                    {profile?.tier.nextTitle
-                      ? `${profile.tier.xpIntoTier} / ${profile.tier.xpForNext} XP menuju ${profile.tier.nextTitle}`
-                      : "Tier tertinggi tercapai"}
+                    {isAdmin
+                      ? "Tier tertinggi tercapai"
+                      : profile?.tier.nextTitle
+                        ? `${profile.tier.xpIntoTier} / ${profile.tier.xpForNext} XP menuju ${profile.tier.nextTitle}`
+                        : "Tier tertinggi tercapai"}
                   </span>
                 </div>
                 <div className="profile-xp-bar">
-                  <span style={{ width: `${profile?.tier.progress ?? 0}%` }} />
+                  <span style={{ width: `${progress}%` }} />
                 </div>
               </div>
             </div>
@@ -146,6 +171,10 @@ export default function ProfilePage() {
             ) : (
               <p className="profile-empty">Belum ada riwayat download.</p>
             )}
+          </MenuRow>
+
+          <MenuRow icon={<Sparkles size={17} />} title="Tabel Tier" subtitle="Syarat XP dan jumlah download" open={open === "tiers"} onToggle={() => setOpen(open === "tiers" ? null : "tiers")}>
+            <TierTable currentTitle={title} />
           </MenuRow>
 
           <Link className="profile-row" href="/vip">
@@ -196,6 +225,53 @@ export default function ProfilePage() {
 
       {!isLoaded && <p className="profile-loading">Memuat profil...</p>}
     </main>
+  );
+}
+
+function TierTable({ currentTitle }: { currentTitle: string }) {
+  const currentIndex = TIER_ROWS.findIndex((row) => row.title === currentTitle);
+
+  return (
+    <div className="tier-table-wrap">
+      <table className="tier-table">
+        <thead>
+          <tr>
+            <th scope="col">Tier</th>
+            <th scope="col">XP</th>
+            <th scope="col">Download</th>
+          </tr>
+        </thead>
+        <tbody>
+          {TIER_ROWS.map((row, index) => {
+            const style = tierStyle(row.title);
+            const isCurrent = row.title === currentTitle;
+            const isReached = currentIndex >= 0 && index <= currentIndex;
+            return (
+              <tr key={row.title} className={isCurrent ? "is-current" : undefined}>
+                <th scope="row">
+                  <span
+                    className="tier-badge"
+                    style={
+                      row.title === "Legend"
+                        ? { color: style.color, borderColor: style.borderColor, backgroundImage: style.background }
+                        : { color: style.color, borderColor: style.borderColor, background: style.background }
+                    }
+                  >
+                    {row.title}
+                  </span>
+                </th>
+                <td>{row.xp.toLocaleString("id-ID")}</td>
+                <td>{row.downloads.toLocaleString("id-ID")}</td>
+                <td className="tier-table-mark">
+                  {isCurrent ? <span className="tier-mark is-you">Kamu</span> : isReached ? "✓" : ""}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+      <p className="profile-empty">Setiap download menambah {XP_PER_DOWNLOAD} XP. Tier naik otomatis sesuai XP yang terkumpul.</p>
+    </div>
   );
 }
 
