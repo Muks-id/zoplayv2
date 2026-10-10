@@ -1171,14 +1171,6 @@ button { color: inherit; }
   text-shadow: 0 2px 18px rgba(0, 0, 0, 0.25);
 }
 
-.chat-header p.chat-seg-sub {
-  padding: 6px 14px;
-  margin: 0;
-  opacity: 0.75;
-  font-size: 0.82rem;
-  color: #c9d6cc;
-}
-
 .chat-online-badge {
   display: inline-flex;
   align-items: center;

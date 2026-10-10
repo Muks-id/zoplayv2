@@ -182,8 +182,7 @@ export default function ChatPage() {
       <div className="chat-page">
       <div className="chat-header">
         <div className="chat-header-text">
-          <h1 className="chat-seg chat-seg-title">Chat Publik</h1>
-          <p className="chat-seg chat-seg-sub">Bergabung dengan komunitas ZOPLAY.</p>
+          <h1 className="chat-seg chat-seg-title">Chat</h1>
         </div>
         <div className="chat-online-badge">
           <Users size={15} />
