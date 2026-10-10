@@ -223,7 +223,7 @@ button { color: inherit; }
 .icon-button:hover, .round-control:hover { color: var(--z-green); border-color: rgba(155, 225, 93, .5); background: rgba(155, 225, 93, .08); }
 .desktop-search-button { display: none; }
 
-.hero-wrap { max-width: 1440px; height: 530px; position: relative; margin: 0 auto; overflow: hidden; background: var(--z-bg); }
+.hero-wrap { max-width: 1440px; height: 460px; position: relative; margin: 0 auto; overflow: hidden; background: var(--z-bg); }
 .hero-art { position: absolute; inset: 0; background-position: center 43%; background-size: cover; animation: hero-reveal 600ms ease both; transition: background-image 250ms ease; }
 .hero-shade { position: absolute; inset: -1px; background: linear-gradient(90deg, rgba(11, 15, 14, .96) 0%, rgba(11, 15, 14, .83) 32%, rgba(11, 15, 14, .24) 75%, rgba(11, 15, 14, .12) 100%), linear-gradient(0deg, var(--z-bg) 0%, var(--z-bg) 2%, rgba(11, 15, 14, .25) 30%, rgba(11,15,14,.03) 74%, rgba(11,15,14,.18) 100%); }
 /* Layar lebih lebar dari 1440px: tepi kiri & kanan foto ikut memudar ke latar agar tidak terlihat potongan. */
@@ -464,7 +464,7 @@ button { color: inherit; }
 }
 
 @media (min-width: 1441px) {
-  .hero-wrap { height: 570px; }
+  .hero-wrap { height: 490px; }
   .hero-content { padding-top: 75px; }
 }
 @media (max-width: 1020px) {
@@ -491,7 +491,7 @@ button { color: inherit; }
   .auth-cta { padding: 8px 9px; }
   .header-search kbd { display: none; }
   .desktop-search-button { display: none; }
-  .hero-wrap { height: 515px; }
+  .hero-wrap { height: 440px; }
   .hero-art { background-position: 58% center; }
   .hero-shade { background: linear-gradient(90deg, rgba(11, 15, 14, .84), rgba(11, 15, 14, .25)), linear-gradient(0deg, var(--z-bg) 0%, var(--z-bg) 2%, rgba(11, 15, 14, .37) 34%, rgba(11,15,14,.1) 100%); }
   .hero-content { padding: 35px 21px 26px; }
