@@ -164,7 +164,7 @@ export default function GameDetail({ game, recommendations }: { game: Game; reco
                   const links = version.links.filter((link) => link.platform === platform);
                   if (!links.length) return null;
                   return <div className="download-platform-group" key={platform}>
-                    <div className="download-platform"><span>{platform === "windows" ? <Monitor size={16} /> : <Smartphone size={16} />}{platform === "windows" ? "Windows" : "Android"}</span><small>{platform === "windows" ? "Windows 10/11 · 64-bit" : "Android 8.0+ · RAM 4 GB"}</small></div>
+                    <div className="download-platform"><span>{platform === "windows" ? <Monitor size={16} /> : <Smartphone size={16} />}{platform === "windows" ? "Windows" : "Android"}</span></div>
                     {links.map((link, index) => <div className="server-row" key={`${platform}-${link.serverName}`}><span>{link.serverName}{index === 0 && <small>Recommended</small>}</span><button disabled={!link.safelinkId} onClick={() => { if (link.safelinkId) beginDownload(link.safelinkId); }}><Download size={14} /> Download</button></div>)}
                   </div>;
                 })}

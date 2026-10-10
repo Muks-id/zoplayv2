@@ -380,10 +380,9 @@ button { color: inherit; }
 .download-version-label { color: var(--z-green); }
 .download-version-item + .download-version-item { margin-top: 4px; }
 .download-platform-group + .download-platform-group { margin-top: 14px; padding-top: 8px; border-top: 1px solid rgba(218, 240, 224, .08); }
-.download-platform { display: flex; align-items: center; justify-content: space-between; padding: 9px 0 12px; }
+.download-platform { display: flex; align-items: center; padding: 9px 0 12px; }
 .download-platform > span { display: inline-flex; align-items: center; gap: 7px; color: #dce6de; font-size: 11px; }
 .download-platform > span svg { color: var(--z-green); }
-.download-platform small { color: #849087; font-size: 9px; }
 .server-row { min-height: 43px; display: flex; align-items: center; justify-content: space-between; padding: 0 9px; border-top: 1px solid rgba(218, 240, 224, .07); color: #c8d2ca; font-size: 10px; }
 .server-row > span { display: flex; align-items: center; gap: 8px; }
 .server-row small { padding: 3px 5px; border: 1px solid rgba(155, 225, 93, .19); border-radius: 2px; color: var(--z-green); font-size: 8px; }
