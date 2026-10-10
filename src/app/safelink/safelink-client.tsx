@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import type { Game } from "@/lib/games";
 import { SiteNavigation } from "@/components/site-navigation";
-import PresenceIndicator from "@/components/presence-indicator";
+import { SiteFooter } from "@/components/site-footer";
 import { useVipStatus } from "@/components/vip-provider";
 import { isRecord } from "@/lib/utils";
 
@@ -212,10 +212,7 @@ export default function SafelinkClient({ game, hasDestination, safelinkId = null
         <Link className="safelink-back" href={`/games/${encodeURIComponent(game.slug)}`}>← Kembali ke postingan {game.title}</Link>
       </div>
 
-      <footer className="safelink-footer">
-        <span>© 2025 ZOPLAY — Safe link untuk para player.</span>
-        <PresenceIndicator />
-      </footer>
+      <SiteFooter />
     </main>
   );
 }

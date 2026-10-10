@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft, SearchX } from "lucide-react";
 import { SiteNavigation } from "@/components/site-navigation";
+import { SiteFooter } from "@/components/site-footer";
 
 export default function NotFound() {
   return (
@@ -15,6 +16,7 @@ export default function NotFound() {
         </section>
         <Link className="safelink-back" href="/"><ArrowLeft size={14} /> Kembali ke beranda</Link>
       </div>
+      <SiteFooter />
     </main>
   );
 }

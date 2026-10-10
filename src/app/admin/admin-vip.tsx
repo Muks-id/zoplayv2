@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Check, Crown, LoaderCircle, Send, ShieldCheck, ShieldX, X } from "lucide-react";
 import { VipBadge } from "@/components/vip-badge";
+import { SiteFooter } from "@/components/site-footer";
 
 type VipRequest = {
   id: string;
@@ -268,6 +269,7 @@ export default function AdminVip({ adminName }: { adminName: string }) {
           </section>}
         </>}
       </section>
+      <SiteFooter />
     </main>
   );
 }

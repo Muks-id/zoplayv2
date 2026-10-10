@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { currentUser } from "@clerk/nextjs/server";
 import { SiteNavigation } from "@/components/site-navigation";
+import { SiteFooter } from "@/components/site-footer";
 import { getVipStatus } from "@/lib/server/vip";
 import { VIP_DURATIONS, VIP_PRICES } from "@/lib/vip-shared";
 import VipChat from "./vip-chat";
@@ -88,6 +89,7 @@ export default async function VipPage() {
 
         <VipChat displayName={displayName} />
       </div>
+      <SiteFooter />
     </main>
   );
 }

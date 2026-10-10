@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { SiteNavigation } from "@/components/site-navigation";
+import { SiteFooter } from "@/components/site-footer";
 import SignInForm from "./sign-in-form";
 
 export default function SignInPage() {
@@ -11,6 +12,7 @@ export default function SignInPage() {
           <SignInForm />
         </Suspense>
       </div>
+      <SiteFooter />
     </main>
   );
 }

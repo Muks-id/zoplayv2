@@ -4,6 +4,7 @@ import Link from "next/link";
 import AdminGameForm from "./admin-game-form";
 import AdminVip from "./admin-vip";
 import { SiteNavigation } from "@/components/site-navigation";
+import { SiteFooter } from "@/components/site-footer";
 import { createClient } from "@supabase/supabase-js";
 
 export const metadata = {
@@ -24,6 +25,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
           <h1>Akun ini belum memiliki akses admin.</h1>
           <Link href="/">Kembali ke katalog</Link>
         </section>
+        <SiteFooter />
       </main>
     );
   }

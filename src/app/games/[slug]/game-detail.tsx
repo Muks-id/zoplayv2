@@ -11,7 +11,6 @@ import {
   Clock3,
   Crown,
   Download,
-  Gamepad2,
   MessageCircle,
   Monitor,
   ShieldAlert,
@@ -24,8 +23,8 @@ import type { Game } from "@/lib/games";
 import { SiteNavigation } from "@/components/site-navigation";
 import { useVipStatus } from "@/components/vip-provider";
 import { PlatformPill } from "@/components/platform-icons";
+import { SiteFooter } from "@/components/site-footer";
 import CommentsSection from "./comments-section";
-import PresenceIndicator from "@/components/presence-indicator";
 import GameRating from "./game-rating";
 
 /** Durasi hitung mundur pada popup download untuk selain member VIP. */
@@ -188,7 +187,7 @@ export default function GameDetail({ game, recommendations }: { game: Game; reco
         <Link className="detail-bottom-back" href="/"><ArrowLeft size={15} /> Kembali ke semua game</Link>
       </article>
 
-      <footer className="site-footer detail-footer"><Link className="brand footer-brand" href="/"><span className="brand-mark"><Gamepad2 size={18} strokeWidth={2.5} /></span><span>ZOPLAY<span className="brand-period">.</span></span></Link><span className="copyright">© 2025 ZOPLAY. Dibuat untuk para player.</span><nav aria-label="Informasi"><Link href="/privacy">Privacy Policy</Link><Link href="/dmca">DMCA</Link><Link href="/disclaimer">Disclaimer</Link></nav><PresenceIndicator /></footer>
+      <SiteFooter />
 
 
       {downloadError && <div className="dialog-backdrop download-backdrop" onClick={() => setDownloadError(null)}>

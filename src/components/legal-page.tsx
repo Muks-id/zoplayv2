@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { ArrowLeft } from "lucide-react";
 import { SiteNavigation } from "@/components/site-navigation";
-import PresenceIndicator from "@/components/presence-indicator";
+import { SiteFooter } from "@/components/site-footer";
 
 const legalLinks = [
   { href: "/privacy", label: "Privacy Policy" },
@@ -44,10 +44,7 @@ export function LegalPage({
         <Link className="safelink-back" href="/"><ArrowLeft size={14} /> Kembali ke beranda</Link>
       </div>
 
-      <footer className="safelink-footer">
-        <span>© 2025 ZOPLAY. Dibuat untuk para player.</span>
-        <PresenceIndicator />
-      </footer>
+      <SiteFooter />
     </main>
   );
 }

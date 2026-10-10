@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Check, Crown, LoaderCircle, Pencil, Plus, Star, Trash2, Upload } from "lucide-react";
+import { SiteFooter } from "@/components/site-footer";
 
 type DownloadPlatform = "windows" | "android";
 type AdminDownloadVersion = {
@@ -229,6 +230,7 @@ export default function AdminGameForm({ adminName, vipMemberCount = 0 }: { admin
         </form>
         </>}
       </section>
+      <SiteFooter />
     </main>
   );
 }

@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Clock3, MessageCircle, Reply, Send, Users } from "lucide-react";
 import { SiteNavigation } from "@/components/site-navigation";
+import { SiteFooter } from "@/components/site-footer";
 import { VipBadge } from "@/components/vip-badge";
 import { SignedIn, SignedOut, SignInButton, useUser } from "@clerk/nextjs";
 import { CHAT_MESSAGE_EMOJIS, CHAT_REACTION_EMOJIS, type ChatReaction } from "@/lib/chat-emojis";
@@ -315,6 +316,7 @@ export default function ChatPage() {
 
       <Link className="chat-back" href="/">Kembali ke beranda <ArrowRight size={14} /></Link>
       </div>
+      <SiteFooter />
     </>
   );
 }

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase-client";
 import { SiteHeader } from "@/components/site-header";
 import { MobileBottomBar } from "@/components/mobile-bottom-bar";
-import PresenceIndicator from "@/components/presence-indicator";
+import { SiteFooter } from "@/components/site-footer";
 import { PlatformPill } from "@/components/platform-icons";
 import { gameDownloadCount, gameSlug, type Game } from "@/lib/games";
 import { useUser } from "@clerk/nextjs";
@@ -17,7 +17,6 @@ import {
   ChevronRight,
   Clock3,
   Download,
-  Gamepad2,
   MessageCircle,
   Search,
   Sparkles,
@@ -269,7 +268,7 @@ const [catalogGames, setCatalogGames] = useState<Game[]>([]);
         <div className="load-more-wrap"><button className="load-more" onClick={() => setActiveCategory("Semua Game")}>Lihat katalog lengkap <ArrowDownToLine size={16} /></button></div>
       </section>
 
-      <footer className="site-footer"><a className="brand footer-brand" href="#top"><span className="brand-mark"><Gamepad2 size={18} strokeWidth={2.5} /></span><span>ZOPLAY<span className="brand-period">.</span></span></a><span className="copyright">© 2025 ZOPLAY. Dibuat untuk para player.</span><nav aria-label="Informasi"><a href="/privacy">Privacy Policy</a><a href="/dmca">DMCA</a><a href="/disclaimer">Disclaimer</a></nav><PresenceIndicator /></footer>
+      <SiteFooter />
 
       <MobileBottomBar currentPage="home" onSearchClick={() => setMobileSearchOpen(true)} onMenuClick={() => setMobileMenuOpen(true)} />
 

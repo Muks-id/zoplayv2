@@ -14,6 +14,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { SiteNavigation } from "@/components/site-navigation";
+import { SiteFooter } from "@/components/site-footer";
 import { tierStyle } from "@/lib/tier-style";
 import { VipBadge } from "@/components/vip-badge";
 import { isRecord } from "@/lib/utils";
@@ -224,6 +225,7 @@ export default function ProfilePage() {
       </div>
 
       {!isLoaded && <p className="profile-loading">Memuat profil...</p>}
+      <SiteFooter />
     </main>
   );
 }
