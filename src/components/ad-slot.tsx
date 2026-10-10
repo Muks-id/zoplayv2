@@ -34,7 +34,6 @@ export function AdSlot({ ads = [], className = "" }: AdSlotProps) {
 
   return (
     <section className={`ad-slot ${className}`.trim()} aria-label="Iklan">
-      <span className="ad-slot-label">Iklan</span>
       <div className="ad-slot-stack">
         {items.map((ad) => (
           <a

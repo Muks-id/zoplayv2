@@ -8,6 +8,8 @@ import {
   Bookmark,
   Check,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   Clock3,
   Crown,
   Download,
@@ -120,6 +122,11 @@ export default function GameDetail({ game, recommendations }: { game: Game; reco
 
   const versions = game.downloadVersions ?? [];
   const galleryImages = game.galleryImages?.length ? game.galleryImages : [game.image];
+  const [galleryIndex, setGalleryIndex] = useState(0);
+  // Basis data bisa berubah (game disunting admin), jadi indeks dijepit agar
+  // tidak menunjuk gambar yang sudah tidak ada.
+  const activeGalleryIndex = Math.min(galleryIndex, Math.max(galleryImages.length - 1, 0));
+  const activeGalleryImage = galleryImages[activeGalleryIndex] ?? game.image;
 
   return (
     <main className="game-detail-page">
@@ -166,7 +173,56 @@ export default function GameDetail({ game, recommendations }: { game: Game; reco
             </section>) : <div className="detail-no-versions">Link download belum tersedia.</div>}
 
             <button className="accordion-trigger detail-gallery-trigger" aria-expanded={galleryOpen} onClick={() => setGalleryOpen(!galleryOpen)}><span><Sparkles size={17} /> Screenshot gallery</span><ChevronDown className={galleryOpen ? "chevron open" : "chevron"} size={18} /></button>
-            {galleryOpen && <div className="gallery-preview">{galleryImages.map((image, index) => <div key={`${image}-${index}`} style={{ backgroundImage: `url("${image}")` }} />)}</div>}
+            {galleryOpen && (
+              <div className="gallery-carousel">
+                <div
+                  className="gallery-slide"
+                  style={{ backgroundImage: `url("${activeGalleryImage}")` }}
+                  role="img"
+                  aria-label={`Screenshot ${activeGalleryIndex + 1} dari ${galleryImages.length}`}
+                />
+
+                {galleryImages.length > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      className="gallery-nav is-prev"
+                      aria-label="Screenshot sebelumnya"
+                      onClick={() => setGalleryIndex((activeGalleryIndex - 1 + galleryImages.length) % galleryImages.length)}
+                    >
+                      <ChevronLeft size={18} />
+                    </button>
+                    <button
+                      type="button"
+                      className="gallery-nav is-next"
+                      aria-label="Screenshot berikutnya"
+                      onClick={() => setGalleryIndex((activeGalleryIndex + 1) % galleryImages.length)}
+                    >
+                      <ChevronRight size={18} />
+                    </button>
+
+                    {/* Tanda penggeser: garis progres di bawah foto */}
+                    <div className="gallery-dots" role="tablist" aria-label="Pilih screenshot">
+                      {galleryImages.map((image, index) => (
+                        <button
+                          key={`${image}-${index}`}
+                          type="button"
+                          role="tab"
+                          aria-selected={index === activeGalleryIndex}
+                          aria-label={`Screenshot ${index + 1}`}
+                          className={index === activeGalleryIndex ? "gallery-dot is-active" : "gallery-dot"}
+                          onClick={() => setGalleryIndex(index)}
+                        />
+                      ))}
+                    </div>
+
+                    <span className="gallery-counter">
+                      {activeGalleryIndex + 1} / {galleryImages.length}
+                    </span>
+                  </>
+                )}
+              </div>
+            )}
             {game.is18Plus && <div className="age-warning"><ShieldAlert size={18} /><span><strong>Peringatan konten 18+</strong>Game ini ditujukan untuk pengguna dewasa.</span></div>}
           </aside>
         </section>

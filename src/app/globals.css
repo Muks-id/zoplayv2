@@ -239,6 +239,24 @@ button { color: inherit; }
 .hero-kicker span { margin: 0 7px; color: var(--z-green); }
 .hero-copy h1 { max-width: 500px; margin: 13px 0 14px; color: #f5f7f2; font-size: clamp(33px, 4vw, 54px); font-weight: 700; line-height: 1.06; }
 .hero-copy p { max-width: 450px; margin: 0; color: #abb5ae; font-size: 13px; line-height: 1.75; }
+
+/* Deskripsi featured dipotong ke satu baris supaya tinggi slider tidak
+   berubah-ubah mengikuti panjang tiap deskripsi game. Sisanya memudar
+   ke kanan lewat mask, dan teks penuh tersedia lewat atribut title. */
+.hero-copy .hero-description {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  /* Tinggi satu baris dijaga agar tombol "Lihat Detail" tidak bergeser
+     antara game yang deskripsinya pendek dan yang panjang. */
+  min-height: 1.75em;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  mask-image: linear-gradient(90deg, #000 62%, transparent 96%);
+  -webkit-mask-image: linear-gradient(90deg, #000 62%, transparent 96%);
+}
 .hero-meta { display: flex; flex-wrap: wrap; gap: 19px; margin-top: 20px; color: #c7d0c9; font-size: 11px; }
 .hero-meta span { display: inline-flex; align-items: center; gap: 6px; }
 .hero-meta span:first-child { color: var(--z-green); }
@@ -272,7 +290,6 @@ button { color: inherit; }
 /* Slot iklan 320x50. Tingginya mengikuti jumlah iklan: tiap item punya
    aspect-ratio 320/50, jadi menambah iklan menambah tinggi container. */
 .ad-slot { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 8px; }
-.ad-slot-label { align-self: flex-start; color: #6f7c73; font-size: 9px; text-transform: uppercase; letter-spacing: .8px; }
 .ad-slot-stack { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; }
 .ad-slot-item { display: block; width: min(320px, 100%); aspect-ratio: 320 / 50; overflow: hidden; border: 1px solid rgba(222, 245, 231, .09); border-radius: 7px; background: rgba(255, 255, 255, .025); text-decoration: none; }
 .ad-slot-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -376,6 +393,20 @@ button { color: inherit; }
 .gallery-trigger { margin-top: 17px; border-top: 1px solid var(--z-border); }
 .gallery-preview { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 12px 0; }
 .gallery-preview > div { aspect-ratio: 1.5; border: 1px solid var(--z-border); border-radius: 3px; background-position: center; background-size: cover; }
+
+/* Gallery satu foto per tampilan dengan tombol geser */
+.gallery-carousel { position: relative; padding: 12px 0 6px; }
+.gallery-slide { aspect-ratio: 16 / 9; border: 1px solid var(--z-border); border-radius: 4px; background-position: center; background-size: cover; background-color: rgba(255, 255, 255, .03); }
+.gallery-nav { position: absolute; top: 50%; display: grid; place-items: center; width: 34px; height: 34px; margin-top: calc(16px - 17px); border: 1px solid rgba(222, 245, 231, .16); border-radius: 50%; background: rgba(9, 14, 11, .78); backdrop-filter: blur(8px); color: #d6e2d8; cursor: pointer; transition: background .15s ease, color .15s ease; }
+.gallery-nav:hover { background: rgba(155, 225, 93, .18); color: #fff; }
+.gallery-nav.is-prev { left: 18px; }
+.gallery-nav.is-next { right: 18px; }
+.gallery-counter { position: absolute; top: 18px; right: 18px; padding: 3px 8px; border: 1px solid rgba(222, 245, 231, .14); border-radius: 99px; background: rgba(9, 14, 11, .72); color: #b9c6bb; font-family: var(--font-geist-mono), monospace; font-size: 9px; }
+/* Tanda penggeser di bawah foto */
+.gallery-dots { position: absolute; right: 18px; bottom: 18px; left: 18px; display: flex; justify-content: center; gap: 6px; }
+.gallery-dot { width: 18px; height: 3px; padding: 0; border: 0; border-radius: 99px; background: rgba(255, 255, 255, .28); cursor: pointer; transition: background .15s ease, width .15s ease; }
+.gallery-dot:hover { background: rgba(255, 255, 255, .5); }
+.gallery-dot.is-active { width: 30px; background: var(--z-green); }
 .age-warning { display: flex; align-items: center; gap: 10px; margin-top: 16px; padding: 11px; border: 1px solid rgba(241, 123, 102, .3); border-radius: 3px; background: rgba(241, 123, 102, .06); color: #f19887; }
 .age-warning > span { display: flex; flex-direction: column; gap: 3px; font-size: 9px; }
 .age-warning strong { font-size: 10px; }

@@ -219,7 +219,7 @@ const [catalogGames, setCatalogGames] = useState<Game[]>([]);
           <div className="hero-copy" key={currentFeature.title}>
             <div className="hero-kicker">{currentFeature.category} <span>•</span> {currentFeature.platform}</div>
             <h1>{currentFeature.title}</h1>
-            <p>{currentFeature.description}</p>
+            <p className="hero-description" title={currentFeature.description}>{currentFeature.description}</p>
             <div className="hero-meta"><span><Star size={15} fill="currentColor" /> {currentFeature.rating}</span><span><Download size={15} /> {currentFeature.downloads} downloads</span><span><MessageCircle size={15} /> {currentFeature.comments} ulasan</span></div>
             <button className="primary-button" onClick={() => showGame(currentFeature)}>Lihat Detail <ArrowRight size={17} /></button>
           </div>
