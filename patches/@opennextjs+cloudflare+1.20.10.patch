@@ -1,0 +1,12 @@
+diff --git a/node_modules/@opennextjs/cloudflare/dist/cli/build/patches/plugins/load-manifest.js b/node_modules/@opennextjs/cloudflare/dist/cli/build/patches/plugins/load-manifest.js
+index bff72bd..fb43645 100644
+--- a/node_modules/@opennextjs/cloudflare/dist/cli/build/patches/plugins/load-manifest.js
++++ b/node_modules/@opennextjs/cloudflare/dist/cli/build/patches/plugins/load-manifest.js
+@@ -66,6 +66,7 @@ function loadManifest($PATH, $$$ARGS) {
+         p.endsWith("server-reference-manifest") ||
+         p.endsWith("dynamic-css-manifest") ||
+         p.endsWith("fallback-build-manifest") ||
++        p.endsWith("preview-props") ||
+         p.endsWith("prefetch-hints")) {
+       return {};
+     }
