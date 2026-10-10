@@ -174,8 +174,11 @@ export default function ChatPage() {
   }, [lastMessageByUser]);
 
   return (
-    <div className="chat-page">
+    <>
+      {/* Navbar berada di luar .chat-page supaya lebarnya tetap penuh,
+        sama seperti di halaman home dan profile. */}
       <SiteNavigation currentPage="chat" />
+      <div className="chat-page">
       <div className="chat-header">
         <div className="chat-header-text">
           <h1 className="chat-seg chat-seg-title">Chat Publik</h1>
@@ -311,7 +314,8 @@ export default function ChatPage() {
       {error && <p className="chat-error">{error}</p>}
 
       <Link className="chat-back" href="/">Kembali ke beranda <ArrowRight size={14} /></Link>
-    </div>
+      </div>
+    </>
   );
 }
 
