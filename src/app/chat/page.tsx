@@ -7,7 +7,7 @@ import { SiteNavigation } from "@/components/site-navigation";
 import { SiteFooter } from "@/components/site-footer";
 import { VipBadge } from "@/components/vip-badge";
 import { SignedIn, SignedOut, SignInButton, useUser } from "@clerk/nextjs";
-import { CHAT_MESSAGE_EMOJIS, CHAT_REACTION_EMOJIS, type ChatReaction } from "@/lib/chat-emojis";
+import { CHAT_MESSAGE_EMOJIS, type ChatReaction } from "@/lib/chat-emojis";
 import { tierStyle } from "@/lib/tier-style";
 import { isRecord, isStringArray, isStringRecord } from "@/lib/utils";
 
@@ -135,36 +135,6 @@ export default function ChatPage() {
     return map;
   }, [messages]);
 
-  // Toggle reaction secara lokal dulu agar responsif; server tetap jadi penentu saat polling berikutnya.
-  const toggleReaction = async (messageId: string, emoji: string) => {
-    setMessages((current) =>
-      current.map((message) => {
-        if (message.id !== messageId) return message;
-        const reactions = message.reactions ?? [];
-        const index = reactions.findIndex((item) => item.emoji === emoji);
-        if (index === -1) {
-          return { ...message, reactions: [...reactions, { emoji, count: 1, reactedByMe: true }] };
-        }
-        const target = reactions[index];
-        if (target.reactedByMe) {
-          const next = target.count <= 1 ? reactions.filter((_, i) => i !== index) : reactions.map((item, i) => (i === index ? { ...item, count: item.count - 1, reactedByMe: false } : item));
-          return { ...message, reactions: next };
-        }
-        return { ...message, reactions: reactions.map((item, i) => (i === index ? { ...item, count: item.count + 1, reactedByMe: true } : item)) };
-      }),
-    );
-
-    try {
-      await fetch("/api/chat-reactions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messageId, emoji }),
-      });
-    } catch {
-      // Polling berikutnya akan menyinkronkan ulang.
-    }
-  };
-
   const onlineCount = useMemo(() => {
     const twoMinutesAgo = Date.now() - 2 * 60 * 1000;
     let count = 0;
@@ -231,20 +201,6 @@ export default function ChatPage() {
                             <Reply size={12} /> Reply
                           </button>
                         </div>
-                        <div className="chat-footer-reactions">
-                          {(message.reactions ?? []).map((reaction) => (
-                            <button
-                              key={reaction.emoji}
-                              type="button"
-                              className={reaction.reactedByMe ? "chat-reaction-chip is-mine" : "chat-reaction-chip"}
-                              onClick={() => void toggleReaction(message.id, reaction.emoji)}
-                              title={`${reaction.count} ${reaction.emoji}`}
-                            >
-                              {reaction.emoji} <span>{reaction.count}</span>
-                            </button>
-                          ))}
-                          <ReactionPicker onPick={(emoji) => void toggleReaction(message.id, emoji)} />
-                        </div>
                         <div className="chat-footer-time">
                           <span className="chat-footer-divider" />
                           <Clock3 size={11} />
@@ -256,20 +212,6 @@ export default function ChatPage() {
                         <div className="chat-footer-time">
                           <Clock3 size={11} />
                           <time>{new Date(message.created_at).toLocaleString("id-ID", { hour: "2-digit", minute: "2-digit", day: "numeric", month: "short" })}</time>
-                        </div>
-                        <div className="chat-footer-reactions">
-                          {(message.reactions ?? []).map((reaction) => (
-                            <button
-                              key={reaction.emoji}
-                              type="button"
-                              className={reaction.reactedByMe ? "chat-reaction-chip is-mine" : "chat-reaction-chip"}
-                              onClick={() => void toggleReaction(message.id, reaction.emoji)}
-                              title={`${reaction.count} ${reaction.emoji}`}
-                            >
-                              {reaction.emoji} <span>{reaction.count}</span>
-                            </button>
-                          ))}
-                          <ReactionPicker onPick={(emoji) => void toggleReaction(message.id, emoji)} />
                         </div>
                         <div className="chat-footer-reply">
                           <span className="chat-footer-divider" />
@@ -317,39 +259,6 @@ export default function ChatPage() {
       </div>
       <SiteFooter />
     </>
-  );
-}
-
-function ReactionPicker({ onPick }: { onPick: (emoji: string) => void }) {
-  const [open, setOpen] = useState(false);
-  return (
-    <div className="reaction-picker">
-      <button
-        type="button"
-        className="chat-reaction-add"
-        aria-label="Tambah reaction"
-        aria-expanded={open}
-        onClick={() => setOpen((value) => !value)}
-      >
-        😊+
-      </button>
-      {open && (
-        <div className="reaction-picker-menu" onMouseLeave={() => setOpen(false)}>
-          {CHAT_REACTION_EMOJIS.map((emoji) => (
-            <button
-              key={emoji}
-              type="button"
-              onClick={() => {
-                onPick(emoji);
-                setOpen(false);
-              }}
-            >
-              {emoji}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
   );
 }
 

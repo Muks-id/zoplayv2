@@ -11,7 +11,8 @@ import {
   Download,
   LogOut,
   Settings,
-  Sparkles,
+  Trophy,
+  UserRound,
 } from "lucide-react";
 import { SiteNavigation } from "@/components/site-navigation";
 import { SiteFooter } from "@/components/site-footer";
@@ -174,7 +175,7 @@ export default function ProfilePage() {
             )}
           </MenuRow>
 
-          <MenuRow icon={<Sparkles size={17} />} title="Tabel Tier" subtitle="Syarat XP dan jumlah download" open={open === "tiers"} onToggle={() => setOpen(open === "tiers" ? null : "tiers")}>
+          <MenuRow icon={<Trophy size={17} />} title="Tabel Tier" subtitle="Syarat XP dan jumlah download" open={open === "tiers"} onToggle={() => setOpen(open === "tiers" ? null : "tiers")}>
             <TierTable currentTitle={title} />
           </MenuRow>
 
@@ -193,7 +194,7 @@ export default function ProfilePage() {
             </div>
           </MenuRow>
 
-          <MenuRow icon={<Crown size={17} />} title="Foto Profil" subtitle="Pilih avatar atau unggah foto sendiri" open={open === "avatar"} onToggle={() => setOpen(open === "avatar" ? null : "avatar")}>
+          <MenuRow icon={<UserRound size={17} />} title="Foto Profil" subtitle="Pilih avatar atau unggah foto sendiri" open={open === "avatar"} onToggle={() => setOpen(open === "avatar" ? null : "avatar")}>
             <AvatarPicker
               current={profile?.avatarUrl ?? null}
               onSave={async (avatarUrl) => {

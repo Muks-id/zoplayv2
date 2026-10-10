@@ -6,6 +6,7 @@ import { supabase } from "@/lib/supabase-client";
 import { SiteHeader } from "@/components/site-header";
 import { MobileBottomBar } from "@/components/mobile-bottom-bar";
 import { SiteFooter } from "@/components/site-footer";
+import { AdSlot } from "@/components/ad-slot";
 import { PlatformPill } from "@/components/platform-icons";
 import { gameDownloadCount, gameSlug, type Game } from "@/lib/games";
 import { useUser } from "@clerk/nextjs";
@@ -235,10 +236,7 @@ const [catalogGames, setCatalogGames] = useState<Game[]>([]);
       </section> : <section className="hero-wrap is-empty" id="top" aria-label="Memuat katalog game" />}
 
       <section className="catalog-section" id="games">
-        <div className="section-heading">
-          <div><span className="section-label">TEMUKAN PETUALANGAN BARU</span><h2>Game pilihan <span>buat kamu.</span></h2></div>
-          <a className="text-link" href="#games">Jelajahi semua <ArrowRight size={16} /></a>
-        </div>
+        <AdSlot />
 
         <div className="catalog-toolbar">
           <div className="category-scroll" aria-label="Kategori game">
