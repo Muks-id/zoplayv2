@@ -50,3 +50,6 @@ next-env.d.ts
 
 # cloudflare dev vars
 .dev.vars
+
+# cloudflare local state (sqlite caches, dev wasm bundles)
+/.wrangler/
