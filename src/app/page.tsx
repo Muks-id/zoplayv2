@@ -7,7 +7,7 @@ import { SiteHeader } from "@/components/site-header";
 import { MobileBottomBar } from "@/components/mobile-bottom-bar";
 import PresenceIndicator from "@/components/presence-indicator";
 import { PlatformPill } from "@/components/platform-icons";
-import { demoGames, gameCategories, gameDownloadCount, gameSlug, type Game } from "@/lib/games";
+import { gameDownloadCount, gameSlug, type Game } from "@/lib/games";
 import { useUser } from "@clerk/nextjs";
 import {
   ArrowDownToLine,
@@ -24,9 +24,10 @@ import {
   Star,
 } from "lucide-react";
 
-const games = demoGames;
-const categories = gameCategories;
 const FEATURE_INTERVAL_MS = 6000;
+// Dipakai hanya sebagai pengganti thumbnail kosong. Data demo tidak lagi dipakai
+// sebagai sumber katalog, supaya tidak pernah tampil sebagai posting.
+const FALLBACK_GAME_IMAGE = "/file.svg";
 
 function twoDigits(value: number) {
   return String(value).padStart(2, "0");
@@ -59,8 +60,10 @@ export default function Home() {
   const router = useRouter();
   const { user } = useUser();
   const isAdmin = user?.publicMetadata.role === "admin";
-  const [catalogGames, setCatalogGames] = useState<Game[]>(games);
-  const [catalogCategories, setCatalogCategories] = useState(categories);
+  // Katalog sengaja dimulai kosong. Kalau diisi data demo, submission game demo
+// akan sempat tampil sebelum Supabase selesai memuat katalog asli.
+const [catalogGames, setCatalogGames] = useState<Game[]>([]);
+  const [catalogCategories, setCatalogCategories] = useState<string[]>(["Semua Game"]);
   const [activeCategory, setActiveCategory] = useState("Semua Game");
   const [activeTab, setActiveTab] = useState<"popular" | "recent">("popular");
   const [bookmarkedTitles, setBookmarkedTitles] = useState<string[]>([]);
@@ -105,7 +108,7 @@ export default function Home() {
           title: row.title,
           category: category ?? "Lainnya",
           platform: supportsPC && supportsAndroid ? "PC & Android" as const : supportsPC ? "PC" as const : "Android" as const,
-          image: row.thumbnail || games[0].image,
+          image: row.thumbnail || FALLBACK_GAME_IMAGE,
           rating: row.game_ratings?.length
             ? (row.game_ratings.reduce((total, item) => total + item.rating, 0) / row.game_ratings.length).toFixed(1)
             : "BARU",
@@ -161,7 +164,9 @@ export default function Home() {
   const featuredGames = catalogGames.filter((game) => game.featured);
   const featureGames = featuredGames.length ? featuredGames : catalogGames;
   const featureCount = featureGames.length;
-  const activeFeatureIndex = featureIndex % featureCount;
+  // Katalog bisa kosong selagi Supabase dimuat (atau belum ada game sama sekali),
+  // jadi indeks dan slider harus diamankan supaya tidak terjadi modulo dengan nol.
+  const activeFeatureIndex = featureCount > 0 ? featureIndex % featureCount : 0;
   const currentFeature = featureGames[activeFeatureIndex];
 
   // Slider otomatis; timer di-reset setiap kali slide berganti (termasuk saat diklik manual).
@@ -206,7 +211,7 @@ export default function Home() {
     <main className="zoplay-shell">
       <SiteHeader games={catalogGames} categories={catalogCategories} isAdmin={isAdmin} search={search} onSearchChange={setSearch} onSelectCategory={selectCategory} mobileSearchOpen={mobileSearchOpen} onMobileSearchOpenChange={setMobileSearchOpen} mobileMenuOpen={mobileMenuOpen} onMobileMenuOpenChange={setMobileMenuOpen} currentPage="home" />
 
-      <section className="hero-wrap" id="top">
+      {currentFeature ? <section className="hero-wrap" id="top">
         <div className="hero-art" style={{ backgroundImage: `url("${currentFeature.image}")` }} />
         <div className="hero-shade" />
         <div className="hero-content">
@@ -228,7 +233,7 @@ export default function Home() {
           </div>
           <div className="hero-index">{twoDigits(activeFeatureIndex + 1)} <span>/</span> {twoDigits(featureCount)}</div>
         </div>
-      </section>
+      </section> : <section className="hero-wrap is-empty" id="top" aria-label="Memuat katalog game" />}
 
       <section className="catalog-section" id="games">
         <div className="section-heading">
@@ -260,7 +265,7 @@ export default function Home() {
               <div className="game-stats"><span><Download size={13} /> {game.downloads}</span><span><MessageCircle size={13} /> {game.comments}</span></div>
             </div>
           </article>)}
-        </div> : <div className="empty-state"><Search size={23} /><p>{showBookmarks && bookmarkedTitles.length === 0 ? "Belum ada game tersimpan." : "Game tidak ditemukan."}</p><button onClick={() => { setSearch(""); setActiveCategory("Semua Game"); setShowBookmarks(false); }}>Tampilkan semua game</button></div>}
+        </div> : <div className="empty-state"><Search size={23} /><p>{catalogGames.length === 0 ? "Belum ada game di katalog." : showBookmarks && bookmarkedTitles.length === 0 ? "Belum ada game tersimpan." : "Game tidak ditemukan."}</p>{catalogGames.length > 0 && <button onClick={() => { setSearch(""); setActiveCategory("Semua Game"); setShowBookmarks(false); }}>Tampilkan semua game</button>}</div>}
         <div className="load-more-wrap"><button className="load-more" onClick={() => setActiveCategory("Semua Game")}>Lihat katalog lengkap <ArrowDownToLine size={16} /></button></div>
       </section>
 

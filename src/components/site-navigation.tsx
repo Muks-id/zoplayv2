@@ -9,7 +9,7 @@ import { MobileBottomBar } from "@/components/mobile-bottom-bar";
 import { VipChip } from "@/components/vip-chip";
 import { useVipStatus } from "@/components/vip-provider";
 import { supabase } from "@/lib/supabase-client";
-import { demoGames, gameCategories, type Game } from "@/lib/games";
+import { gameCategories, type Game } from "@/lib/games";
 
 type SearchGameRow = {
   slug: string;
@@ -45,7 +45,7 @@ function loadSearchCatalog() {
         title: row.title,
         category: category ?? "Lainnya",
         platform: supportsPC && supportsAndroid ? "PC & Android" : supportsPC ? "PC" : "Android",
-        image: row.thumbnail || demoGames[0].image,
+        image: row.thumbnail || "/file.svg",
         rating: row.game_ratings?.length
           ? (row.game_ratings.reduce((total, item) => total + item.rating, 0) / row.game_ratings.length).toFixed(1)
           : "BARU",
@@ -65,6 +65,7 @@ function loadSearchCatalog() {
 }
 
 const NO_EXTRA_GAMES: Game[] = [];
+const EMPTY_CATALOG: Game[] = [];
 
 type SiteNavigationProps = {
   currentPage?: "detail" | "chat" | "page" | "profile";
@@ -80,7 +81,8 @@ export function SiteNavigation({ currentPage = "page", extraGames = NO_EXTRA_GAM
   const router = useRouter();
   const { user } = useUser();
   const { isVip } = useVipStatus();
-  const [catalog, setCatalog] = useState<Game[]>(demoGames);
+  // Kosong sampai katalog asli termuat: data demo tidak boleh muncul di pencarian.
+  const [catalog, setCatalog] = useState<Game[]>(EMPTY_CATALOG);
   const [search, setSearch] = useState("");
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
