@@ -17,7 +17,7 @@ import { SiteNavigation } from "@/components/site-navigation";
 import { tierStyle } from "@/lib/tier-style";
 import { VipBadge } from "@/components/vip-badge";
 import { isRecord } from "@/lib/utils";
-import { AVATAR_OPTIONS, svgToDataUri } from "@/lib/avatars";
+import { AVATAR_OPTIONS } from "@/lib/avatars";
 
 type ProfileData = {
   username: string;
@@ -348,13 +348,13 @@ function AvatarPicker({
           <button
             key={option.id}
             type="button"
-            className={current === svgToDataUri(option.svg) ? "avatar-option is-selected" : "avatar-option"}
-            onClick={() => void save(svgToDataUri(option.svg))}
+            className={current === option.src ? "avatar-option is-selected" : "avatar-option"}
+            onClick={() => void save(option.src)}
             disabled={saving}
             title={option.label}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={svgToDataUri(option.svg)} alt={option.label} />
+            <img src={option.src} alt={option.label} loading="lazy" width={256} height={256} />
           </button>
         ))}
       </div>

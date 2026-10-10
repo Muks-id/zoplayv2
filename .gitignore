@@ -53,3 +53,6 @@ next-env.d.ts
 
 # cloudflare local state (sqlite caches, dev wasm bundles)
 /.wrangler/
+
+# sumber foto avatar resolusi penuh (versi 256px ada di public/avatars)
+/public/Gemini_Generated_Image_*.jpg

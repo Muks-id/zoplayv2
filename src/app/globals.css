@@ -868,7 +868,7 @@ button { color: inherit; }
 .avatar-option { padding: 4px; border: 2px solid rgba(219, 239, 224, .12); border-radius: 12px; background: rgba(255, 255, 255, .03); cursor: pointer; transition: border-color .15s ease, background .15s ease; }
 .avatar-option:hover { border-color: rgba(155, 225, 93, .4); }
 .avatar-option.is-selected { border-color: var(--z-green); background: rgba(155, 225, 93, .1); box-shadow: 0 0 10px rgba(155, 225, 93, .15); }
-.avatar-option img { width: 100%; height: auto; border-radius: 9px; display: block; }
+.avatar-option img { width: 100%; aspect-ratio: 1 / 1; height: auto; object-fit: cover; border-radius: 9px; display: block; background: rgba(255, 255, 255, .04); }
 .avatar-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 .avatar-upload, .avatar-remove { padding: 7px 14px; border-radius: 99px; font-size: 11px; cursor: pointer; }
 .avatar-upload { border: 1px solid rgba(155, 225, 93, .4); background: rgba(155, 225, 93, .08); color: var(--z-green); }
