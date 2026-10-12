@@ -34,7 +34,7 @@ export async function GET() {
 
   const [requests, subscriptions, messages] = await Promise.all([
     client.from("vip_requests").select("id, user_id, username, duration_days, status, note, decided_at, created_at").order("created_at", { ascending: false }).limit(100),
-    client.from("vip_subscriptions").select("user_id, started_at, expires_at, granted_by").order("expires_at", { ascending: false }),
+    client.from("vip_subscriptions").select("user_id, started_at, expires_at, granted_by").order("expires_at", { ascending: false }).limit(1000),
     client.from("vip_messages").select("id, user_id, sender, message, attachment_url, read_by_admin, created_at").order("created_at", { ascending: false }).limit(200),
   ]);
 

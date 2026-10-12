@@ -13,5 +13,8 @@
       "binding": "WORKER_SELF_REFERENCE",
       "service": "zoplay"
     }
-  ]
+  ],
+  "limits": {
+    "cpu_ms": 30000
+  }
 }

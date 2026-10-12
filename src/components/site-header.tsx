@@ -101,14 +101,18 @@ export function SiteHeader({
     <header className="site-header">
       <Link className="brand" href="/" aria-label="ZOPLAY beranda"><span className="brand-mark"><Gamepad2 size={21} strokeWidth={2.5} /></span><span>ZOPLAY<span className="brand-period">.</span></span></Link>
       <nav className="desktop-nav" aria-label="Navigasi utama">
-        <Link className={`nav-link ${currentPage === "home" ? "active" : ""}`} href="/">Home</Link>
+        {/* prefetch dimatikan: setiap <Link> default-nya melakukan prefetch RSC
+            yang memaksa render server penuh. Dengan 5 link di navbar, satu
+            kunjungan halaman bisa memicu 5 render sekaligus — inilah penyebab
+            utama Error 1102 pada Workers Free (batas CPU 10ms). */}
+        <Link prefetch={false} className={`nav-link ${currentPage === "home" ? "active" : ""}`} href="/">Home</Link>
         <div className="category-nav-wrap">
           <button className={`nav-link category-nav-trigger ${categoryMenuOpen ? "active" : ""}`} aria-expanded={categoryMenuOpen} onClick={() => setCategoryMenuOpen(!categoryMenuOpen)}>Kategori <ChevronDown size={14} className={categoryMenuOpen ? "category-chevron open" : "category-chevron"} /></button>
           {categoryMenuOpen && <div className="category-menu">{categoryItems.map((item) => <button key={item.value} onClick={() => chooseCategory(item.value)}>{item.label}<ArrowRight size={13} /></button>)}</div>}
         </div>
-        <Link className={`nav-link ${currentPage === "chat" ? "active" : ""}`} href="/chat">Chat</Link>
-        <Link className={`nav-link ${currentPage === "profile" ? "active" : ""}`} href="/profile">Profil</Link>
-        {isAdmin && <><Link className={`nav-link ${currentPage === "admin" ? "active" : ""}`} href="/admin?section=vip">VIP</Link><Link className="nav-link" href="/admin">Admin</Link></>}
+        <Link prefetch={false} className={`nav-link ${currentPage === "chat" ? "active" : ""}`} href="/chat">Chat</Link>
+        <Link prefetch={false} className={`nav-link ${currentPage === "profile" ? "active" : ""}`} href="/profile">Profil</Link>
+        {isAdmin && <><Link prefetch={false} className={`nav-link ${currentPage === "admin" ? "active" : ""}`} href="/admin?section=vip">VIP</Link><Link prefetch={false} className="nav-link" href="/admin">Admin</Link></>}
       </nav>
       <div className="header-actions">
         <div className="search-container">
@@ -133,9 +137,9 @@ export function SiteHeader({
         <div className="mobile-menu-heading"><span>Jelajahi kategori</span><button className="icon-button" aria-label="Tutup menu" onClick={() => onMobileMenuOpenChange(false)}><X size={20} /></button></div>
         {categoryItems.map((item) => <button key={item.value} onClick={() => chooseCategory(item.value)}>{item.label}<ArrowRight size={16} /></button>)}
         {vipMenuLink}
-        {isAdmin && <><Link className="mobile-menu-link" href="/admin?section=vip" onClick={() => onMobileMenuOpenChange(false)}>Kelola VIP <ArrowRight size={16} /></Link><Link className="mobile-menu-link" href="/admin" onClick={() => onMobileMenuOpenChange(false)}>Dashboard admin <ArrowRight size={16} /></Link></>}
-        <Link className="mobile-menu-link" href="/chat" onClick={() => onMobileMenuOpenChange(false)}>Chat Publik <ArrowRight size={16} /></Link>
-        <Link className="mobile-menu-link" href="/profile" onClick={() => onMobileMenuOpenChange(false)}>Profil Saya <ArrowRight size={16} /></Link>
+        {isAdmin && <><Link prefetch={false} className="mobile-menu-link" href="/admin?section=vip" onClick={() => onMobileMenuOpenChange(false)}>Kelola VIP <ArrowRight size={16} /></Link><Link prefetch={false} className="mobile-menu-link" href="/admin" onClick={() => onMobileMenuOpenChange(false)}>Dashboard admin <ArrowRight size={16} /></Link></>}
+        <Link prefetch={false} className="mobile-menu-link" href="/chat" onClick={() => onMobileMenuOpenChange(false)}>Chat Publik <ArrowRight size={16} /></Link>
+        <Link prefetch={false} className="mobile-menu-link" href="/profile" onClick={() => onMobileMenuOpenChange(false)}>Profil Saya <ArrowRight size={16} /></Link>
       </div>
     </div>}
   </>;

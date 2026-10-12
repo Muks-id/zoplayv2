@@ -33,7 +33,10 @@ function loadSearchCatalog() {
       // download_links tidak bisa dibaca dari browser, jadi platform ditentukan dari
   // kolom spesifikasi minimum. Tidak perlu mengambil link sama sekali.
   .select("slug, title, thumbnail, min_req_win, min_req_android, category:categories(name), game_ratings(rating)")
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: false })
+      // Batas wajib: katalog ini dimuat di navbar setiap halaman. Tanpa limit,
+      // PostgREST menarik seluruh tabel games beserta join rating (cartesian).
+      .limit(500);
     if (error || !data?.length) return null;
 
     return (data as unknown as SearchGameRow[]).map((row) => {

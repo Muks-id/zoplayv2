@@ -85,7 +85,12 @@ const [catalogGames, setCatalogGames] = useState<Game[]>([]);
         // download_links tidak diambil dari browser: tabel itu hanya bisa dibaca server.
         // Dukungan platform ditentukan dari kolom spesifikasi minimum.
         .select("id, slug, title, thumbnail, description, developer, release_date, file_size, min_req_win, min_req_android, is_featured, is_18_plus, download_count, category:categories(name), game_galleries(image_url), game_download_versions(id, version_label), game_ratings(rating), comments(id)")
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false })
+        // Batas wajib: tanpa ini PostgREST menarik SELURUH tabel games beserta
+        // 4 nested join. Join PostgREST bersifat cartesian, jadi satu game dengan
+        // 5 gallery × 3 versi × 10 rating × 20 komentar = 3000 baris.
+        // Workers Free hanya punya 10ms CPU — query seperti ini langsung 1102.
+        .limit(120);
 
       if (error || !data?.length || cancelled) return;
 

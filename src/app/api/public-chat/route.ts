@@ -1,6 +1,7 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
 import { isRecord } from "@/lib/utils";
+import { withErrorHandling } from "@/lib/server/route-guard";
 import type { ChatReaction } from "@/lib/chat-emojis";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -14,7 +15,7 @@ function serviceClient() {
   });
 }
 
-export async function GET() {
+async function handleGet() {
   const client = serviceClient();
   if (!client) return Response.json({ error: "Supabase belum dikonfigurasi." }, { status: 500 });
 
@@ -59,7 +60,9 @@ export async function GET() {
   return Response.json({ messages: withReactions });
 }
 
-export async function POST(req: Request) {
+export const GET = withErrorHandling(handleGet, "public-chat:GET");
+
+async function handlePost(req: Request) {
   const { userId } = await auth();
   if (!userId) return Response.json({ error: "Harus login dulu." }, { status: 401 });
 
@@ -122,3 +125,5 @@ export async function POST(req: Request) {
 
   return Response.json({ message: data });
 }
+
+export const POST = withErrorHandling(handlePost, "public-chat:POST");
