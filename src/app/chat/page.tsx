@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Clock3, MessageCircle, Reply, Send, Trash2, Users } from "lucide-react";
+import { ArrowRight, Clock3, LoaderCircle, MessageCircle, Reply, Send, Trash2, Users } from "lucide-react";
 import { SiteNavigation } from "@/components/site-navigation";
 import { SiteFooter } from "@/components/site-footer";
 import { VipBadge } from "@/components/vip-badge";
@@ -10,6 +10,7 @@ import { SignedIn, SignedOut, SignInButton, useUser } from "@clerk/nextjs";
 import { CHAT_MESSAGE_EMOJIS, type ChatReaction } from "@/lib/chat-emojis";
 import { tierStyle } from "@/lib/tier-style";
 import { isRecord, isStringArray, isStringRecord } from "@/lib/utils";
+import { ChatBubbleSkeleton } from "@/components/loading";
 
 type ChatMessage = {
   id: string;
@@ -191,7 +192,7 @@ export default function ChatPage() {
       <div className="chat-box">
         <div className="chat-messages">
           {loading ? (
-            <p className="chat-empty">Memuat chat...</p>
+            <ChatBubbleSkeleton count={5} />
           ) : messages.length === 0 ? (
             <div className="chat-empty">
               <MessageCircle size={28} />
@@ -418,8 +419,13 @@ function ChatComposer({
           maxLength={500}
           aria-label="Tulis pesan"
         />
-        <button type="submit" disabled={sending || !input.trim()} aria-label="Kirim pesan">
-          <Send size={17} />
+        <button
+          type="submit"
+          className={sending ? "is-busy" : undefined}
+          disabled={sending || !input.trim()}
+          aria-label={sending ? "Mengirim pesan" : "Kirim pesan"}
+        >
+          {sending ? <LoaderCircle size={17} className="admin-spinner" /> : <Send size={17} />}
         </button>
       </div>
     </form>

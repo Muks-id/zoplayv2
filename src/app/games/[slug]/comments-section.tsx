@@ -7,6 +7,7 @@ import { supabase } from "@/lib/supabase-client";
 import { VipBadge } from "@/components/vip-badge";
 import { tierStyle } from "@/lib/tier-style";
 import { isRecord, isStringArray, isStringRecord } from "@/lib/utils";
+import { CommentSkeleton } from "@/components/loading";
 
 type GameComment = {
   id: string;
@@ -312,7 +313,7 @@ export default function CommentsSection({ gameId }: { gameId?: string }) {
       <div className="comments-heading"><div><span className="section-label">KOMUNITAS</span><h2 id="comments-title">Komentar <span>{comments.length}</span></h2></div><MessageCircle size={20} /></div>
       {!gameId ? <div className="comments-notice">Komentar akan tersedia setelah game ini disimpan di Supabase.</div> : <>
         <div className="comment-list" aria-live="polite">
-          {isLoading ? <div className="comments-notice">Memuat komentar...</div> : topLevelComments.length ? topLevelComments.map((comment) => {
+          {isLoading ? <CommentSkeleton count={3} /> : topLevelComments.length ? topLevelComments.map((comment) => {
             const replies = repliesByParent.get(comment.id) ?? [];
             const expanded = expandedThreads.includes(comment.id);
             return (

@@ -1,9 +1,11 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Parkinsans } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { idID } from "@clerk/localizations";
 import { ThemeProvider } from "@/components/theme-provider";
 import { VipProvider } from "@/components/vip-provider";
+import { RouteProgress } from "@/components/route-progress";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -39,6 +41,7 @@ export default function RootLayout({
         <body
           className={`${geistSans.className} ${geistMono.className} ${parkinsans.className} antialiased`}
         >
+        <Suspense fallback={null}><RouteProgress /></Suspense>
         <ClerkProvider
           localization={idID}
           appearance={{

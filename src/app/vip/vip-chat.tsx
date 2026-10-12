@@ -151,7 +151,12 @@ export default function VipChat({ displayName }: { displayName: string }) {
             <input type="file" accept="image/jpeg,image/png,image/webp" ref={fileInputRef} className="sr-only" onChange={(event) => setProof(event.target.files?.[0] ?? null)} />
             <button type="button" aria-label="Lampirkan bukti transfer" title="Lampirkan bukti transfer" onClick={() => fileInputRef.current?.click()}><ImagePlus size={18} /></button>
             <input value={text} onChange={(event) => setText(event.target.value)} placeholder="Tulis pesan atau catatan untuk admin..." aria-label="Tulis pesan" maxLength={2000} />
-            <button type="submit" disabled={isSending || (!text.trim() && !proof)} aria-label="Kirim pesan">
+            <button
+              type="submit"
+              className={isSending ? "is-busy" : undefined}
+              disabled={isSending || (!text.trim() && !proof)}
+              aria-label={isSending ? "Mengirim pesan" : "Kirim pesan"}
+            >
               {isSending ? <LoaderCircle className="admin-spinner" size={17} /> : <Send size={17} />}
             </button>
           </div>

@@ -7,7 +7,8 @@ import { SiteHeader } from "@/components/site-header";
 import { MobileBottomBar } from "@/components/mobile-bottom-bar";
 import { SiteFooter } from "@/components/site-footer";
 import { AdSlot } from "@/components/ad-slot";
-import { PlatformPill } from "@/components/platform-icons";
+import { GameGridSkeleton } from "@/components/loading";
+import { GameArtButton } from "@/components/game-art-button";
 import { gameDownloadCount, gameSlug, type Game } from "@/lib/games";
 import { useUser } from "@clerk/nextjs";
 import {
@@ -254,13 +255,17 @@ const [catalogGames, setCatalogGames] = useState<Game[]>([]);
           </div>
         </div>
 
-        {visibleGames.length > 0 ? <div className="game-grid">
+        {catalogGames.length === 0
+          ? <GameGridSkeleton count={8} />
+          : visibleGames.length > 0 ? <div className="game-grid">
           {visibleGames.map((game, index) => <article className="game-card" key={game.title} style={{ animationDelay: `${index * 45}ms` }}>
-            <button className="game-art" aria-label={`Lihat ${game.title}`} onClick={() => showGame(game)} style={{ backgroundImage: `url("${game.image}")` }}>
-              <PlatformPill platform={game.platform} />
-              <span className="rating-pill"><Star size={12} fill="currentColor" /> {game.rating}</span>
-              <span className="art-open"><ArrowRight size={17} /></span>
-            </button>
+            <GameArtButton
+              image={game.image}
+              title={game.title}
+              platform={game.platform}
+              rating={game.rating}
+              onOpen={() => showGame(game)}
+            />
             <div className="game-info">
               <div className="game-title-row"><span className="game-category">{game.category}</span><button className={`bookmark-action ${isBookmarked(game) ? "is-saved" : ""}`} type="button" aria-label={isBookmarked(game) ? `Hapus bookmark ${game.title}` : `Bookmark ${game.title}`} aria-pressed={isBookmarked(game)} title={isBookmarked(game) ? "Hapus bookmark" : "Simpan bookmark"} onClick={() => toggleBookmark(game)}><Bookmark size={16} fill={isBookmarked(game) ? "currentColor" : "none"} /></button></div>
               <button className="game-title" onClick={() => showGame(game)}>{game.title}</button>
