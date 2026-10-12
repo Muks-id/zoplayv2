@@ -771,7 +771,25 @@ button { color: inherit; }
 .google-comment-prompt p { margin: 0; color: #9ba89f; font-size: 10px; line-height: 1.5; }
 .comments-notice { padding: 17px 10px; color: #829087; text-align: center; font-size: 10px; }
 .comment-error { margin: 0; color: #ef9a87; font-size: 10px; }
-.comment-list { margin-bottom: 16px; padding: 0 15px; border: 1px solid rgba(219, 239, 224, .12); border-radius: 5px; background: rgba(255,255,255,.025); }
+/* Daftar komentar dibungkus box dengan tinggi maksimum + scroll, supaya
+   halaman tidak memanjang saat jumlah komentar banyak. `max-height`
+   (bukan height) membuat box tetap ikut naik saat komentar masih sedikit. */
+.comment-list {
+  max-height: 420px;
+  margin-bottom: 16px;
+  padding: 0 15px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 1px solid rgba(219, 239, 224, .12);
+  border-radius: 5px;
+  background: rgba(255,255,255,.025);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(155, 225, 93, .28) transparent;
+}
+.comment-list::-webkit-scrollbar { width: 7px; }
+.comment-list::-webkit-scrollbar-track { background: transparent; }
+.comment-list::-webkit-scrollbar-thumb { border-radius: 99px; background: rgba(155, 225, 93, .28); }
+.comment-list::-webkit-scrollbar-thumb:hover { background: rgba(155, 225, 93, .45); }
 .comment-thread { padding: 4px 0 12px; border-bottom: 1px solid rgba(219, 239, 224, .08); }
 .comment-thread:last-child { border-bottom: 0; }
 .comment-item { display: flex; gap: 11px; padding: 11px 2px 0; }
@@ -1167,7 +1185,7 @@ button { color: inherit; }
   .recommendation-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px 10px; }
   .recommendation-card .game-art { aspect-ratio: 1.2 / 1; }
   .comment-form { padding: 12px; }
-  .comment-list { padding: 0 12px; }
+  .comment-list { padding: 0 12px; max-height: 340px; }
   .comment-toggle-replies { margin-left: 0; }
   .comment-replies { margin-left: 8px; }
   .comment-reply-form { margin-left: 0; }
