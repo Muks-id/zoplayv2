@@ -34,7 +34,7 @@ export default function VipChat({ displayName }: { displayName: string }) {
 
   const loadMessages = useCallback(async () => {
     try {
-      const response = await fetch("/api/vip/messages", { cache: "no-store" });
+      const response = await fetch("/api/vip?action=messages", { cache: "no-store" });
       if (!response.ok) return;
       const result = (await response.json()) as { messages?: VipMessage[] };
       setMessages(result.messages ?? []);

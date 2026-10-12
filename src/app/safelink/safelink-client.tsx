@@ -96,7 +96,7 @@ export default function SafelinkClient({ game, hasDestination, safelinkId = null
   const handleGoToLink = () => {
     if (!safelinkId) return;
     // Server yang mengalihkan ke URL asli; URL-nya tidak pernah bocor ke browser.
-    window.location.href = `/api/download/redirect?id=${encodeURIComponent(safelinkId)}`;
+    window.location.href = `/api/download?redirect=${encodeURIComponent(safelinkId)}`;
   };
 
   return (

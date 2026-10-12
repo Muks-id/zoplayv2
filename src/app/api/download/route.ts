@@ -5,8 +5,19 @@ import { decryptSafelinkToken } from "@/lib/server/safelink-token";
 import { dedupeCookieName, downloadCookieOptions, incrementDownloadCount, wasCountedRecently } from "@/lib/server/download-count";
 import { recordDownloadXp } from "@/lib/server/profiles";
 import { getVipStatus } from "@/lib/server/vip";
+import { handleDownloadRedirect } from "@/lib/server/download-redirect";
 
 export const runtime = "nodejs";
+
+/**
+ * GET /api/download?redirect=<token> → 302 ke URL asli
+ * (dahulu route terpisah /api/download/redirect, digabung agar jumlah
+ *  serverless function tetap di bawah batas Vercel Hobby).
+ */
+export async function GET(request: Request) {
+  const token = new URL(request.url).searchParams.get("redirect") ?? "";
+  return handleDownloadRedirect(request, token);
+}
 
 /**
  * Satu-satunya pintu download.

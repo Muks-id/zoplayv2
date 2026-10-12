@@ -1,35 +1,25 @@
 import { auth } from "@clerk/nextjs/server";
-import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
-import { dedupeCookieName, downloadCookieOptions, incrementDownloadCount, wasCountedRecently } from "@/lib/server/download-count";
-import { decryptSafelinkToken } from "@/lib/server/safelink-token";
 import { getVipStatus } from "@/lib/server/vip";
-
-export const runtime = "nodejs";
+import { decryptSafelinkToken } from "@/lib/server/safelink-token";
+import { serverSupabase } from "@/lib/server/supabase-admin";
+import { dedupeCookieName, downloadCookieOptions, incrementDownloadCount, wasCountedRecently } from "@/lib/server/download-count";
 
 /**
- * Pintu redirect ke URL download asli.
+ * Pintu redirect ke URL download asli (dahulu /api/download/redirect).
  * URL tujuan tidak pernah dikirim ke browser — hanya redirect 302 dari server.
  *
  * - Member VIP: langsung dialihkan ke link asli.
  * - User biasa: harus sudah pernah membuka halaman safelink (cookie dari
  *   /api/safelink/hit), jika tidak akan dikembalikan ke /safelink dulu.
  */
-export async function GET(request: Request) {
+export async function handleDownloadRedirect(request: Request, token: string) {
   const url = new URL(request.url);
-  const token = url.searchParams.get("id") ?? "";
   const payload = token ? decryptSafelinkToken(token) : null;
   if (!payload) return NextResponse.json({ error: "Link tidak valid." }, { status: 400 });
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!supabaseUrl || !serviceRoleKey) {
-    return NextResponse.json({ error: "Konfigurasi server Supabase belum lengkap." }, { status: 503 });
-  }
-
-  const supabase = createClient(supabaseUrl, serviceRoleKey, {
-    auth: { autoRefreshToken: false, persistSession: false },
-  });
+  const supabase = serverSupabase();
+  if (!supabase) return NextResponse.json({ error: "Konfigurasi server Supabase belum lengkap." }, { status: 503 });
 
   const { data: game, error } = await supabase
     .from("games")

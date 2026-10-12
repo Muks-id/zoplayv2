@@ -1,9 +1,14 @@
-import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
+import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
+import { readUserIds } from "@/lib/server/tiers";
 
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
+/**
+ * Dua endpoint lama digabung ke /api/vip supaya jumlah serverless function
+ * tetap di bawah batas Vercel Hobby (12):
+ *   - POST /api/vip  { action: "badges", userIds }  (dari /api/vip/badges)
+ *   - GET  /api/vip?action=messages                 (dari /api/vip/messages)
+ */
 
 const BUCKET = "vip-proofs";
 
@@ -16,8 +21,28 @@ function serviceClient() {
   });
 }
 
+/**
+ * Daftar user yang sedang jadi VIP, untuk lencana di komentar dan chat.
+ * Membaca ID user saja (bukan data pribadi), jadi tetap terbuka untuk pengunjung.
+ */
+export async function handleVipBadges(body: unknown) {
+  const supabase = serviceClient();
+  if (!supabase) return NextResponse.json({ vipUserIds: [] });
+
+  const userIds = readUserIds(body);
+  if (!userIds.length) return NextResponse.json({ vipUserIds: [] });
+
+  const { data } = await supabase
+    .from("vip_subscriptions")
+    .select("user_id")
+    .in("user_id", [...new Set(userIds)])
+    .gt("expires_at", new Date().toISOString());
+
+  return NextResponse.json({ vipUserIds: ((data ?? []) as { user_id: string }[]).map((row) => row.user_id) });
+}
+
 /** Riwayat percakapan user sendiri dengan admin. */
-export async function GET() {
+export async function handleVipMessages() {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: "Silakan masuk terlebih dahulu." }, { status: 401 });
 
@@ -33,8 +58,11 @@ export async function GET() {
 
   if (error) return NextResponse.json({ error: "Gagal memuat percakapan." }, { status: 500 });
 
-  // Bukti transfer disimpan di bucket privat, jadi dikirim lewat server dengan token sementara.
-  const paths = (data ?? []).map((row) => (row as { attachment_url: string | null }).attachment_url).filter((path): path is string => Boolean(path));
+  // Bukti transfer disimpan di bucket privat, jadi dikirim lewat server
+  // dengan URL bertanda tangan sementara.
+  const paths = (data ?? [])
+    .map((row) => (row as { attachment_url: string | null }).attachment_url)
+    .filter((path): path is string => Boolean(path));
   const signedUrls: Record<string, string> = {};
   if (paths.length) {
     const { data: signed } = await supabase.storage.from(BUCKET).createSignedUrls(paths, 3600);

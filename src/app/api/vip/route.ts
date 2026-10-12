@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { getVipStatus, isVipDuration, VIP_PRICES } from "@/lib/server/vip";
 import { compressGameImage, readImageSource } from "@/lib/server/game-images";
+import { handleVipBadges, handleVipMessages } from "@/lib/server/vip-routes";
 
 export const runtime = "nodejs";
 
@@ -30,8 +31,15 @@ function isImageFile(value: FormDataEntryValue | null): value is File {
   return value instanceof File && value.size > 0;
 }
 
-/** Status langganan + harga paket, dipakai halaman /vip dan navbar. */
-export async function GET() {
+/**
+ * GET /api/vip            → status langganan + harga paket (dipakai /vip & navbar)
+ * GET /api/vip?action=messages → riwayat percakapan dengan admin
+ */
+export async function GET(request: Request) {
+  if (new URL(request.url).searchParams.get("action") === "messages") {
+    return handleVipMessages();
+  }
+
   const supabase = serviceClient();
   if (!supabase) return NextResponse.json({ error: "Supabase belum dikonfigurasi." }, { status: 503 });
 
@@ -55,10 +63,17 @@ export async function GET() {
 }
 
 /**
- * Kirim pesan ke admin. Menerima JSON (teks) atau FormData (teks + bukti transfer).
- * Otomatis membuka percakapan bila belum ada pesan sebelumnya.
+ * POST /api/vip                                → kirim pesan ke admin
+ * POST /api/vip { action: "badges", userIds }  → daftar user VIP (publik)
  */
 export async function POST(request: Request) {
+  // Aksi "badges" dipanggil chat & komentar untuk user lain, jadi tidak boleh
+  // ikut tertahan guard login di bawah.
+  const peek: unknown = await request.clone().json().catch(() => null);
+  if (peek && typeof peek === "object" && "action" in peek && (peek as { action?: unknown }).action === "badges") {
+    return handleVipBadges(peek);
+  }
+
   const { userId, username, error: authError } = await requireUser();
   if (authError) return authError;
 

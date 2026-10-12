@@ -2,8 +2,15 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { getProfileSummary, setProfileAvatar } from "@/lib/server/profiles";
 import { getVipStatus } from "@/lib/server/vip";
+import { handleTiers } from "@/lib/server/tiers";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+/** POST juga melayani aksi "tiers" (dahulu route /api/profiles/tiers). */
+function isTiersRequest(body: unknown): boolean {
+  return Boolean(body && typeof body === "object" && "action" in body && (body as { action?: unknown }).action === "tiers");
+}
 
 export async function GET() {
   const { userId } = await auth();
@@ -16,8 +23,13 @@ export async function GET() {
   return NextResponse.json({ profile, vip });
 }
 
-/** Menyimpan avatar profil (preset SVG data URI, foto sendiri sebagai data URL, atau null). */
+/** Menyimpan avatar profil, atau answering `action: "tiers"` untuk lencana tier. */
 export async function POST(request: Request) {
+  // Aksi "tiers" bersifat publik (dipakai chat & komentar untuk user lain),
+  // jadi harus dicek sebelum guard login di bawah.
+  const rawBody: unknown = await request.clone().json().catch(() => null);
+  if (isTiersRequest(rawBody)) return handleTiers(rawBody);
+
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: "Harus masuk terlebih dahulu." }, { status: 401 });
 

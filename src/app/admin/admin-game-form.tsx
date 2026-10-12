@@ -63,10 +63,10 @@ export default function AdminGameForm({ adminName, vipMemberCount = 0 }: { admin
     setErrorMessage("");
     setSuccessTitle("");
     try {
-      const response = await fetch(`/api/admin/games/${encodeURIComponent(game.id)}`, {
+      const response = await fetch("/api/admin/games", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ is_featured: !game.is_featured }),
+        body: JSON.stringify({ id: game.id, is_featured: !game.is_featured }),
       });
       const result = await response.json() as { error?: string };
       if (!response.ok) throw new Error(result.error ?? "Status featured gagal diubah.");
@@ -81,7 +81,11 @@ export default function AdminGameForm({ adminName, vipMemberCount = 0 }: { admin
     setErrorMessage("");
     setSuccessTitle("");
     try {
-      const response = await fetch(`/api/admin/games/${encodeURIComponent(game.id)}`, { method: "DELETE" });
+      const response = await fetch("/api/admin/games", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: game.id }),
+      });
       const result = await response.json() as { error?: string; warning?: string };
       if (!response.ok) throw new Error(result.error ?? "Game gagal dihapus.");
       setSuccessTitle(`${game.title} berhasil dihapus${result.warning ? `. ${result.warning}` : ""}`);
@@ -122,8 +126,10 @@ export default function AdminGameForm({ adminName, vipMemberCount = 0 }: { admin
 
     try {
       const isEditing = Boolean(selectedGame);
-      const endpoint = selectedGame ? `/api/admin/games/${encodeURIComponent(selectedGame.id)}` : "/api/admin/games";
-      const response = await fetch(endpoint, { method: isEditing ? "PATCH" : "POST", body: formData });
+      // ID game ikut dikirim di dalam form saat mengedit, karena PATCH/DELETE
+      // dilayani route /api/admin/games (tanpa segmen [id]).
+      if (selectedGame) formData.append("id", selectedGame.id);
+      const response = await fetch("/api/admin/games", { method: isEditing ? "PATCH" : "POST", body: formData });
       const result = await response.json() as { error?: string; title?: string };
       if (!response.ok) throw new Error(result.error ?? "Game gagal disimpan.");
 

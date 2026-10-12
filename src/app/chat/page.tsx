@@ -88,7 +88,7 @@ export default function ChatPage() {
       return;
     }
     let cancelled = false;
-    fetch("/api/vip/badges", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ userIds: ids }) })
+    fetch("/api/vip", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "badges", userIds: ids }) })
       .then(async (response) => {
         if (!response.ok) return null;
         const result: unknown = await response.json();
@@ -109,7 +109,7 @@ export default function ChatPage() {
       return;
     }
     let cancelled = false;
-    fetch("/api/profiles/tiers", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ userIds: ids }) })
+    fetch("/api/profile", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "tiers", userIds: ids }) })
       .then(async (response) => {
         if (!response.ok) return null;
         const result: unknown = await response.json();
