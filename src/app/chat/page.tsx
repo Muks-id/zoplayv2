@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Clock3, MessageCircle, Reply, Send, Users } from "lucide-react";
+import { ArrowRight, Clock3, MessageCircle, Reply, Send, Trash2, Users } from "lucide-react";
 import { SiteNavigation } from "@/components/site-navigation";
 import { SiteFooter } from "@/components/site-footer";
 import { VipBadge } from "@/components/vip-badge";
@@ -135,6 +135,34 @@ export default function ChatPage() {
     return map;
   }, [messages]);
 
+  // Hanya akun admin (publicMetadata.role) yang boleh menghapus pesan.
+  // Otorisasi sesungguhnya dicek ulang di /api/admin/delete.
+  const isAdmin = user?.publicMetadata?.role === "admin";
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const deleteMessage = async (messageId: string) => {
+    if (!isAdmin || deletingId) return;
+    setDeletingId(messageId);
+    setError(null);
+    try {
+      const res = await fetch("/api/admin/delete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ kind: "chat", id: messageId }),
+      });
+      if (!res.ok) {
+        const result: unknown = await res.json().catch(() => null);
+        throw new Error(isRecord(result) && typeof result.error === "string" ? result.error : "Gagal menghapus pesan.");
+      }
+      // Hapus langsung dari daftar; polling berikutnya akan mengonfirmasi ke server.
+      setMessages((current) => current.filter((message) => message.id !== messageId));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Gagal menghapus pesan.");
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   const onlineCount = useMemo(() => {
     const twoMinutesAgo = Date.now() - 2 * 60 * 1000;
     let count = 0;
@@ -192,6 +220,18 @@ export default function ChatPage() {
                   })()}
                   <div className="chat-message-area">
                     <p>{message.message}</p>
+                    {isAdmin && (
+                      <button
+                        type="button"
+                        className="chat-delete"
+                        aria-label={`Hapus pesan dari ${message.username}`}
+                        title="Hapus pesan"
+                        onClick={() => void deleteMessage(message.id)}
+                        disabled={deletingId === message.id}
+                      >
+                        <Trash2 size={13} className={deletingId === message.id ? "is-busy" : undefined} />
+                      </button>
+                    )}
                   </div>
                   <div className="chat-footer">
                     {user?.id === message.user_id ? (

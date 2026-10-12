@@ -1396,6 +1396,15 @@ button { color: inherit; }
 }
 
 .chat-message-area p { margin: 0; font-size: 0.92rem; line-height: 1.55; word-break: break-word; color: #e6f0e6; }
+.chat-message-area { position: relative; }
+.chat-delete { position: absolute; top: 5px; right: 5px; display: grid; place-items: center; width: 24px; height: 24px; border: 0; border-radius: 6px; background: transparent; color: #6f7c73; opacity: 0; cursor: pointer; transition: opacity .15s ease, background .15s ease, color .15s ease; }
+.chat-message:hover .chat-delete, .chat-delete:focus-visible { opacity: 1; }
+.chat-delete:hover { background: rgba(255, 107, 107, .16); color: #ff8b8b; }
+.chat-delete:disabled { cursor: not-allowed; opacity: .5; }
+.chat-delete .is-busy { animation: admin-spin 700ms linear infinite; }
+
+.comment-actions .comment-delete { margin-left: auto; color: #7d5f5f; }
+.comment-actions .comment-delete:hover { color: #ff8b8b; }
 
 .chat-footer { display: flex; align-items: center; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
 .chat-footer-time { display: inline-flex; align-items: center; gap: 4px; color: #829087; font-size: 0.65rem; }

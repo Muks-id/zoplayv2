@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SignInButton, useUser } from "@clerk/nextjs";
-import { ChevronDown, CornerDownRight, LoaderCircle, MessageCircle, Reply, Send, X } from "lucide-react";
+import { ChevronDown, CornerDownRight, LoaderCircle, MessageCircle, Reply, Send, Trash2, X } from "lucide-react";
 import { supabase } from "@/lib/supabase-client";
 import { VipBadge } from "@/components/vip-badge";
 import { tierStyle } from "@/lib/tier-style";
@@ -44,6 +44,37 @@ export default function CommentsSection({ gameId }: { gameId?: string }) {
   const [isLoading, setIsLoading] = useState(Boolean(gameId));
   const [sendingTarget, setSendingTarget] = useState<"comment" | "reply" | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
+  // Hanya akun admin yang boleh menghapus komentar; dicek ulang di server.
+  const isAdmin = user?.publicMetadata?.role === "admin";
+  const [deletingCommentId, setDeletingCommentId] = useState<string | null>(null);
+
+  const deleteComment = async (commentId: string) => {
+    if (!isAdmin || deletingCommentId) return;
+    if (!window.confirm("Hapus komentar ini? Balasan di dalamnya juga akan ikut terhapus.")) return;
+    setDeletingCommentId(commentId);
+    setErrorMessage("");
+    try {
+      const res = await fetch("/api/admin/delete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ kind: "comment", id: commentId }),
+      });
+      if (!res.ok) {
+        const result: unknown = await res.json().catch(() => null);
+        throw new Error(isRecord(result) && typeof result.error === "string" ? result.error : "Gagal menghapus komentar.");
+      }
+      // Balasan ikut terhapus lewat ON DELETE CASCADE, jadi ikut dibuang di sisi klien.
+      const removed = new Set<string>([commentId]);
+      for (const item of comments) {
+        if (item.parent_id === commentId) removed.add(item.id);
+      }
+      setComments((current) => current.filter((item) => !removed.has(item.id)));
+    } catch (err) {
+      setErrorMessage(err instanceof Error ? err.message : "Gagal menghapus komentar.");
+    } finally {
+      setDeletingCommentId(null);
+    }
+  };
   const [replyErrorMessage, setReplyErrorMessage] = useState("");
   const [repliesSupported, setRepliesSupported] = useState(true);
   const [vipAuthorIds, setVipAuthorIds] = useState<Set<string>>(new Set());
@@ -268,8 +299,9 @@ export default function CommentsSection({ gameId }: { gameId?: string }) {
       <div>
         <div className="comment-meta"><strong>{comment.author_name}</strong>{comment.user_id && vipAuthorIds.has(comment.user_id) && <VipBadge />}{comment.user_id && adminAuthorIds.has(comment.user_id) && <span className="admin-badge">Admin</span>}{comment.user_id && authorTiers[comment.user_id] && <span className="tier-badge" style={tierStyle(authorTiers[comment.user_id])}>{authorTiers[comment.user_id]}</span>}<time dateTime={comment.created_at}>{formatDate(comment.created_at)}</time></div>
         <p>{comment.comment_text}</p>
-        {repliesSupported && <div className="comment-actions">
-          <button type="button" className={replyTarget?.commentId === comment.id ? "active" : ""} onClick={() => replyTarget?.commentId === comment.id ? cancelReply() : startReply(rootId, comment)}><Reply size={13} /> Balas</button>
+        {(repliesSupported || isAdmin) && <div className="comment-actions">
+          {repliesSupported && <button type="button" className={replyTarget?.commentId === comment.id ? "active" : ""} onClick={() => replyTarget?.commentId === comment.id ? cancelReply() : startReply(rootId, comment)}><Reply size={13} /> Balas</button>}
+          {isAdmin && <button type="button" className="comment-delete" aria-label={`Hapus komentar dari ${comment.author_name}`} onClick={() => void deleteComment(comment.id)} disabled={deletingCommentId === comment.id}><Trash2 size={13} className={deletingCommentId === comment.id ? "is-busy" : undefined} /> Hapus</button>}
         </div>}
       </div>
     </article>
